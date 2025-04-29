@@ -9,8 +9,8 @@ services:
         value: production
       - key: APP_KEY
         generateValue: true
-      - key: APP_DEBUG
-        value: false
+      - key: APP_URL
+        value: https://apirestsie.onrender.com
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
@@ -24,7 +24,7 @@ services:
           name: mysql
           property: port
       - key: DB_DATABASE
-        value: laravel
+        value: ApiRest
       - key: DB_USERNAME
         value: root
       - key: DB_PASSWORD
@@ -35,5 +35,5 @@ services:
 
 databases:
   - name: mysql
-    databaseName: laravel
+    databaseName: apirest
     user: root
