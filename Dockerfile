@@ -1,35 +1,36 @@
-# Usa PHP 8.2 con Apache preinstalado
-FROM php:8.2-apache
+# Usa una imagen base oficial de PHP con extensiones requeridas
+FROM php:8.2-fpm
 
-# Habilita mod_rewrite (necesario para Laravel)
-RUN a2enmod rewrite
-
-# Instala dependencias necesarias
+# Instala dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    git unzip curl libonig-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip
+    build-essential \
+    libpng-dev \
+    libjpeg-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    curl \
+    sqlite3 \
+    libsqlite3-dev \
+    git \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copia Composer desde su imagen oficial
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Instala Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el código fuente de tu proyecto Laravel
-COPY . /var/www/html
+# Copia el código del proyecto
+WORKDIR /var/www
+COPY . .
 
-# Copia tu configuración personalizada de Apache
+# Instala dependencias del proyecto
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Establece el directorio de trabajo
-WORKDIR /var/www/html
+# Da permisos
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www/storage
 
-# Da permisos a Laravel para que pueda escribir en storage y cache
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+# Expone el puerto
+EXPOSE 8000
 
-# Instala dependencias PHP de Laravel
-RUN composer install --no-dev --optimize-autoloader
-
-# Expone el puerto que usará Apache
-EXPOSE 80
-
-# Comando que mantiene Apache en ejecución
-CMD ["apache2-foreground"]
+# Comando para correr Laravel con el servidor embebido
+CMD php artisan serve --host=0.0.0.0 --port=8000
