@@ -22,8 +22,6 @@ WORKDIR /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage
 
-# (Opcional) Copia un archivo de configuración personalizada de Apache
-COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Instala dependencias del proyecto Laravel (las del archivo composer.json)
 RUN composer install --no-dev --optimize-autoloader
