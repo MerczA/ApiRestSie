@@ -1,39 +1,18 @@
 services:
   - type: web
-    name: laravel-api
+    name: laravel-app
     env: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: php artisan serve --host=0.0.0.0 --port=8000
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_KEY
         generateValue: true
-      - key: APP_URL
-        value: https://apirestsie.onrender.com
-      - key: DB_CONNECTION
-        value: mysql
       - key: DB_HOST
         fromService:
-          type: pserv
-          name: mysql
+          name: your-db-service-name
+          type: postgres or mysql
           property: host
-      - key: DB_PORT
-        fromService:
-          type: pserv
-          name: mysql
-          property: port
-      - key: DB_DATABASE
-        value: ApiRest
-      - key: DB_USERNAME
-        value: root
-      - key: DB_PASSWORD
-        fromService:
-          type: pserv
-          name: mysql
-          property: password
-
-databases:
-  - name: mysql
-    databaseName: apirest
-    user: root
