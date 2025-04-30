@@ -1,36 +1,31 @@
-# Usa una imagen base oficial de PHP con extensiones requeridas
-FROM php:8.2-fpm
+# Usamos una imagen base oficial de PHP con Nginx
+FROM php:8.1-fpm
 
-# Instala dependencias del sistema
+# Instalamos las dependencias necesarias
 RUN apt-get update && apt-get install -y \
-    build-essential \
     libpng-dev \
     libjpeg-dev \
-    libonig-dev \
-    libxml2-dev \
+    libfreetype6-dev \
     zip \
-    unzip \
-    curl \
-    sqlite3 \
-    libsqlite3-dev \
     git \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo pdo_mysql
 
-# Instala Composer
+# Instalamos Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el código del proyecto
-WORKDIR /var/www
-COPY . .
+# Copiamos el código de Laravel al contenedor
+COPY . /var/www/html
 
-# Instala dependencias del proyecto
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Establecemos el directorio de trabajo
+WORKDIR /var/www/html
 
-# Da permisos
-RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www/storage
+# Instalamos las dependencias de Composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Expone el puerto
-EXPOSE 8000
+# Exponemos el puerto 9000
+EXPOSE 9000
 
-# Comando para correr Laravel con el servidor embebido
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Comando para iniciar PHP-FPM
+CMD ["php-fpm"]
