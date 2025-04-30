@@ -1,29 +1,36 @@
-# Usa una imagen oficial de PHP con soporte para Laravel
+# Usa una imagen base oficial de PHP con extensiones requeridas
 FROM php:8.2-fpm
 
 # Instala dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl
+    build-essential \
+    libpng-dev \
+    libjpeg-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    curl \
+    sqlite3 \
+    libsqlite3-dev \
+    git \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
 
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Establece directorio de trabajo
+# Copia el código del proyecto
 WORKDIR /var/www
-
-# Copia los archivos del proyecto
 COPY . .
 
-# Instala dependencias PHP
+# Instala dependencias del proyecto
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Establece permisos adecuados
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Da permisos
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www/storage
 
-# Expone el puerto que usará Render (Render asigna automáticamente uno)
+# Expone el puerto
 EXPOSE 8000
 
-# Comando para ejecutar Laravel (usa el servidor embebido de Laravel)
+# Comando para correr Laravel con el servidor embebido
 CMD php artisan serve --host=0.0.0.0 --port=8000
