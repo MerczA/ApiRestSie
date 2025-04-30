@@ -34,3 +34,4 @@ FROM php:8.2-apache
   RUN a2enmod rewrite
  
   # Inicia Apache al arrancar el contenedor
+  CMD ["apache2-foreground"]
