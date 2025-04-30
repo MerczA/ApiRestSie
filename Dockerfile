@@ -1,20 +1,15 @@
-# Usa una imagen oficial de PHP con Apache
+# Usa la imagen oficial de PHP con Apache
 FROM php:8.2-apache
+
+# Actualiza el sistema y habilita las dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    && apt-get clean \
+    && docker-php-ext-install openssl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
-
-# Instala dependencias necesarias
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    zip \
-    unzip \
-    libzip-dev \
-    && docker-php-ext-install zip pdo
-
-# Instala Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copia los archivos del proyecto al contenedor
 COPY . .
@@ -22,9 +17,8 @@ COPY . .
 # Instala las dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Instala la extensión de OpenSSL
-RUN apt-get update && apt-get install -y libssl-dev && docker-php-ext-install openssl
-
+# Genera la clave de la app (solo si no la inyectas manualmente)
+RUN php artisan key:generate
 
 # Da permisos a la carpeta de almacenamiento
 RUN chown -R www-data:www-data storage bootstrap/cache
@@ -40,4 +34,3 @@ RUN a2enmod rewrite
 
 # Inicia Apache al arrancar el contenedor
 CMD ["apache2-foreground"]
-
