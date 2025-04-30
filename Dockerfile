@@ -1,32 +1,35 @@
-# Usamos una imagen base oficial de PHP con FPM
-FROM php:8.1-fpm
+# Usa una imagen base de PHP con Apache (Laravel necesita ambos)
+FROM php:8.2-apache
+ 
+# Habilita mod_rewrite en Apache (es necesario para que Laravel maneje rutas correctamente)
+RUN a2enmod rewrite
 
-# Instalamos las dependencias del sistema
+# Instala extensiones necesarias para que Laravel funcione
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    zip \
-    git \
-    && apt-get clean
+    git unzip curl libonig-dev libzip-dev zip \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip
 
+# Copia Composer desde otra imagen oficial (esto lo instala)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-
-# Instalamos Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiamos el código fuente de Laravel al contenedor
+# Copia todos los archivos de tu proyecto al servidor
 COPY . /var/www/html
 
-# Establecemos el directorio de trabajo
+# Establece la carpeta principal donde se ejecutará la aplicación
 WORKDIR /var/www/html
 
-# Instalamos las dependencias de Composer
+# Cambia permisos para que Laravel pueda escribir archivos (logs, cachés, etc.)
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+
+# (Opcional) Copia un archivo de configuración personalizada de Apache
+COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Instala dependencias del proyecto Laravel (las del archivo composer.json)
 RUN composer install --no-dev --optimize-autoloader
 
-# Exponemos el puerto 9000
-EXPOSE 9000
+# Expone el puerto 80 (que Apache usará)
+EXPOSE 80
 
-# Comando para ejecutar el servidor PHP-FPM
-CMD ["php-fpm"]
+# Comando para que Apache se quede corriendo
+CMD ["apache2-foreground"]
