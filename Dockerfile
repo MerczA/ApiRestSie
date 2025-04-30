@@ -1,36 +1,32 @@
-# Usamos una imagen base oficial de PHP con FPM
-FROM php:8.1-fpm
+# Imagen base oficial de PHP con Apache
+FROM php:8.2-apache
 
-# Instalamos las dependencias del sistema necesarias para Laravel
+# Instalar dependencias necesarias para Laravel
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    zip \
-    git \
-    libxml2-dev \
-    && apt-get clean
+    zip unzip curl git libzip-dev \
+    && docker-php-ext-install zip pdo pdo_mysql
 
-# Instalamos las extensiones de PHP necesarias para Laravel
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install mbstring bcmath zip
-
-# Instalamos Composer (gestor de dependencias de PHP)
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiamos el código de Laravel al contenedor
+# Copiar el código de Laravel al contenedor
 COPY . /var/www/html
 
-# Establecemos el directorio de trabajo
+# Establecer directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalamos las dependencias de Composer (sin dependencias de desarrollo)
+# Instalar dependencias PHP con Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Exponemos el puerto 9000 para PHP-FPM
-EXPOSE 9000
+# Establecer permisos correctos
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Comando para ejecutar PHP-FPM
-CMD ["php-fpm"]
+# Habilitar mod_rewrite en Apache
+RUN a2enmod rewrite
+
+# Configurar Apache
+RUN echo '<Directory /var/www/html>\n\
+    AllowOverride All\n\
+</Directory>' >> /etc/apache2/apache2.conf
+
+EXPOSE 80
