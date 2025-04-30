@@ -23,6 +23,6 @@ class LoginController extends Controller
             ],
         ];
 
-        return response()->json($logins);
+        return response()->json($logins . "Login Succes");
     }
 }

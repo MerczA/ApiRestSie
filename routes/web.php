@@ -14,11 +14,13 @@ use App\Http\Controllers\Api\HorarioController;
 use App\Http\Controllers\Api\CredencialDigitalController;
 use App\Http\Controllers\Api\GrupoPreparacionController;
 
-Route::prefix('api')->group(function () {
-    Route::get('cuenta-alumnos', [CuentaAlumnoController::class, 'index']);
-    Route::get('logins', [LoginController::class, 'index']);
-    Route::get('calificaciones', [CalificacionController::class, 'index']);
-    Route::get('horarios', [HorarioController::class, 'index']);
-    Route::get('grupos-en-preparacion', [GrupoPreparacionController::class, 'index']);
-    Route::get('credenciales-digitales', [CredencialDigitalController::class, 'index']);
-});
+Route::get('cuenta-alumnos', [CuentaAlumnoController::class, 'index']);
+Route::get('login', [LoginController::class, 'index']);
+Route::get('calificaciones', [CalificacionController::class, 'index']);
+Route::get('horarios', [HorarioController::class, 'index']);
+Route::get('grupos-en-preparacion', [GrupoPreparacionController::class, 'index']);
+Route::get('credenciales-digitales', [CredencialDigitalController::class, 'index']);
+
+Route::post('login', [LoginController::class, 'index']);
+
+    
