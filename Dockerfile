@@ -22,6 +22,8 @@ COPY . .
 # Instala las dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+# Instala la extensión de OpenSSL
+RUN apt-get update && apt-get install -y libssl-dev && docker-php-ext-install openssl
 
 
 # Da permisos a la carpeta de almacenamiento
