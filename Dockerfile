@@ -22,8 +22,7 @@ COPY . .
 # Instala las dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Genera la clave de la app (solo si no la inyectas manualmente)
-RUN php artisan key:generate
+
 
 # Da permisos a la carpeta de almacenamiento
 RUN chown -R www-data:www-data storage bootstrap/cache
