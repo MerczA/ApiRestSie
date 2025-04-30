@@ -1,15 +1,18 @@
 # Usamos una imagen base oficial de PHP con FPM
 FROM php:8.1-fpm
 
-# Instalamos dependencias necesarias
+# Instalamos las dependencias del sistema
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libzip-dev \
     zip \
     git \
-    libzip-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && apt-get clean
+
+# Instalamos las extensiones de PHP necesarias para Laravel
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd \
     && docker-php-ext-install pdo pdo_mysql \
     && docker-php-ext-install mbstring bcmath zip
@@ -17,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 # Instalamos Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiamos el código de Laravel al contenedor
+# Copiamos el código fuente de Laravel al contenedor
 COPY . /var/www/html
 
 # Establecemos el directorio de trabajo
@@ -29,5 +32,5 @@ RUN composer install --no-dev --optimize-autoloader
 # Exponemos el puerto 9000
 EXPOSE 9000
 
-# Comando para iniciar PHP-FPM
+# Comando para ejecutar el servidor PHP-FPM
 CMD ["php-fpm"]
