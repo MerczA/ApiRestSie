@@ -28,8 +28,8 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $logins = [
-            ['id' => 1, 'username' => 'juanperez', 'password' => 'password123'],
-            ['id' => 2, 'username' => 'anagonzalez', 'password' => 'password456'],
+            [ 'username' => 'juanperez', 'password' => 'password123'],
+            [ 'username' => 'anagonzalez', 'password' => 'password456'],
         ];
 
         foreach ($logins as $user) {
