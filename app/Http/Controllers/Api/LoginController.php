@@ -13,11 +13,13 @@ class LoginController extends Controller
             [
                 'id' => 1,
                 'username' => 'juanperez',
+                'email' => 'juanperez@example.com',
                 'password' => 'password123',
             ],
             [
                 'id' => 2,
                 'username' => 'anagonzalez',
+                'email' => 'anagonzalez@example.com',
                 'password' => 'password456',
             ],
         ];
@@ -28,8 +30,18 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $logins = [
-            [ 'username' => 'juanperez', 'password' => 'password123'],
-            [ 'username' => 'anagonzalez', 'password' => 'password456'],
+            [
+                'id' => 1,
+                'username' => 'juanperez',
+                'email' => 'juanperez@example.com',
+                'password' => 'password123',
+            ],
+            [
+                'id' => 2,
+                'username' => 'anagonzalez',
+                'email' => 'anagonzalez@example.com',
+                'password' => 'password456',
+            ],
         ];
 
         foreach ($logins as $user) {
@@ -39,11 +51,18 @@ class LoginController extends Controller
             ) {
                 return response()->json([
                     'login' => 'success',
-                    'user' => $user
+                    'user' => [
+                        'id' => $user['id'],
+                        'username' => $user['username'],
+                        'email' => $user['email'],
+                    ]
                 ]);
             }
         }
 
-        return response()->json(['login' => 'success'], 401);
+        return response()->json([
+            'login' => 'failed',
+            'message' => 'Credenciales inválidas'
+        ], 401);
     }
 }
