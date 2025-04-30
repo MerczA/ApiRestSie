@@ -38,12 +38,12 @@ class LoginController extends Controller
                 $request->password === $user['password']
             ) {
                 return response()->json([
-                    'message' => 'success',
+                    'login' => 'success',
                     'user' => $user
                 ]);
             }
         }
 
-        return response()->json(['message' => 'success'], 401);
+        return response()->json(['login' => 'success'], 401);
     }
 }
