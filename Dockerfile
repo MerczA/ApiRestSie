@@ -23,7 +23,7 @@ RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Expone el puerto que usará Render (Render asigna automáticamente uno)
-EXPOSE 8080
+EXPOSE 8000
 
 # Comando para ejecutar Laravel (usa el servidor embebido de Laravel)
-CMD php artisan serve --host=0.0.0.0 --port=8080
+CMD php artisan serve --host=0.0.0.0 --port=8000
