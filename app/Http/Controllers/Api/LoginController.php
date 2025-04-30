@@ -9,7 +9,6 @@ class LoginController extends Controller
 {
     public function index()
     {
-        // Datos de login simulados (arreglo)
         $logins = [
             [
                 'id' => 1,
@@ -45,6 +44,6 @@ class LoginController extends Controller
             }
         }
 
-        return response()->json(['message' => 'Credenciales inválidas'], 401);
+        return response()->json(['message' => 'success'], 401);
     }
 }
