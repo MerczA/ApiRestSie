@@ -1,35 +1,37 @@
-# Usa una imagen base de PHP con Apache (Laravel necesita ambos)
-FROM php:8.2-apache
- 
-# Habilita mod_rewrite en Apache (es necesario para que Laravel maneje rutas correctamente)
-RUN a2enmod rewrite
+# Usamos una imagen base oficial de PHP con FPM
+FROM php:8.1-fpm
 
-# Instala extensiones necesarias para que Laravel funcione
+# Instalamos las dependencias del sistema necesarias para Laravel
 RUN apt-get update && apt-get install -y \
-    git unzip curl libonig-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    zip \
+    git \
+    libxml2-dev \
+    && apt-get clean
 
-# Copia Composer desde otra imagen oficial (esto lo instala)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Instalamos las extensiones de PHP necesarias para Laravel
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo pdo_mysql \
+    && docker-php-ext-install mbstring bcmath zip
 
-# Copia todos los archivos de tu proyecto al servidor
+# Instalamos Composer (gestor de dependencias de PHP)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copiamos el código de Laravel al contenedor
 COPY . /var/www/html
 
-# Establece la carpeta principal donde se ejecutará la aplicación
+# Establecemos el directorio de trabajo
 WORKDIR /var/www/html
 
-# Cambia permisos para que Laravel pueda escribir archivos (logs, cachés, etc.)
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-
-# (Opcional) Copia un archivo de configuración personalizada de Apache
-COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
-# Instala dependencias del proyecto Laravel (las del archivo composer.json)
+# Instalamos las dependencias de Composer (sin dependencias de desarrollo)
 RUN composer install --no-dev --optimize-autoloader
 
-# Expone el puerto 80 (que Apache usará)
-EXPOSE 80
+# Exponemos el puerto 9000 para PHP-FPM
+EXPOSE 9000
 
-# Comando para que Apache se quede corriendo
-CMD ["apache2-foreground"]
+# Comando para ejecutar PHP-FPM
+CMD ["php-fpm"]
