@@ -7,40 +7,21 @@ use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
-    public function index()
-    {
-        $logins = [
-            [
-                'id' => 1,
-                'username' => 'juanperez',
-                'email' => 'juanperez@example.com',
-                'password' => 'password123',
-            ],
-            [
-                'id' => 2,
-                'username' => 'anagonzalez',
-                'email' => 'anagonzalez@example.com',
-                'password' => 'password456',
-            ],
-        ];
-
-        return response()->json($logins);
-    }
 
     public function login(Request $request)
     {
         $logins = [
             [
                 'id' => 1,
-                'username' => 'juanperez',
+                'username' => '22151197',
                 'email' => 'juanperez@example.com',
-                'password' => 'password123',
+                'password' => '123456',
             ],
             [
                 'id' => 2,
-                'username' => 'anagonzalez',
+                'username' => '22151198',
                 'email' => 'anagonzalez@example.com',
-                'password' => 'password456',
+                'password' => '123456',
             ],
         ];
 
