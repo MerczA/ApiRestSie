@@ -6,8 +6,9 @@
 </head>
 <body>
 <h2>Hola,</h2>
-<p>Recibimos una solicitud para restablecer tu contraseña.</p>
-<p>Haz clic en este enlace para continuar: <a href="https://miapp.com/reset-password">Restablecer contraseña</a></p>
-<p>Si no solicitaste esto, puedes ignorar este correo.</p>
+<p>Hola,</p>
+<p>Haz clic en el siguiente enlace para recuperar tu contraseña:</p>
+<p><a href="#">Recuperar contraseña</a></p>
+<p>Si no solicitaste este correo, ignóralo.</p>
 </body>
 </html>

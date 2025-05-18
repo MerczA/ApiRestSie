@@ -18,4 +18,4 @@ Route::get('horarios', [HorarioController::class, 'index']);
 Route::get('grupos-en-preparacion', [GrupoPreparacionController::class, 'index']);
 Route::get('credenciales-digitales', [CredencialDigitalController::class, 'index']);
 
-Route::post('/password/email', [EmailController::class, 'sendFakeRecoveryEmail']);
+Route::post('password/email', [EmailController::class, 'sendFakeRecoveryEmail']);
