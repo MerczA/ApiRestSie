@@ -1,7 +1,7 @@
 <?php
 
 
-
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\CuentaAlumnoController;
@@ -17,3 +17,5 @@ Route::get('calificaciones', [CalificacionController::class, 'index']);
 Route::get('horarios', [HorarioController::class, 'index']);
 Route::get('grupos-en-preparacion', [GrupoPreparacionController::class, 'index']);
 Route::get('credenciales-digitales', [CredencialDigitalController::class, 'index']);
+
+Route::post('/password/email', [EmailController::class, 'sendFakeRecoveryEmail']);
