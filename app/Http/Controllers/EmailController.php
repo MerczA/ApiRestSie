@@ -4,18 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\FakeRecoveryMail;
 
 class EmailController extends Controller
 {
-    public function sendFakeRecoveryEmail(Request $request): \Illuminate\Http\JsonResponse
+    public function send(Request $request)
     {
         $request->validate([
-            'email' => 'required|email'
+            'to' => 'required|email',
+            'subject' => 'required|string',
+            'message' => 'required|string',
         ]);
 
-        Mail::to($request->email)->send(new FakeRecoveryMail());
+        Mail::raw($request->message, function ($message) use ($request) {
+            $message->to($request->to)
+                ->subject($request->subject);
+        });
 
-        return response()->json(['message' => 'Correo de recuperación enviado.']);
+        return response()->json(['message' => 'Correo enviado con éxito']);
     }
 }
+
