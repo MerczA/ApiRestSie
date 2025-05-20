@@ -31,7 +31,7 @@ class GrupoPreparacionController extends Controller
                 'id' => $i,
                 'materia' => $materias[array_rand($materias)],
                 'numero_creditos' => rand(2, 5),
-                'semestre' => (string)rand(1, 10),
+                'semestre' => (string)rand(1, 9),
                 'maestro' => $maestros[array_rand($maestros)],
                 'horario' => $horarios[array_rand($horarios)],
             ];
